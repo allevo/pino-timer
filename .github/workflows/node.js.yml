@@ -25,3 +25,9 @@ jobs:
         cache: 'npm'
     - run: npm i
     - run: npm test
+    - name: Coveralls Parallel
+      uses: coverallsapp/github-action@v2
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel: true
+        flag-name: run-${{ matrix.node-version }}

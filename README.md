@@ -1,4 +1,8 @@
 # pino-timer
+[![Build Status](https://img.shields.io/github/actions/workflow/status/allevo/pino-timer/.github/workflows/node.js.yml?branch=main)](https://github.com/allevo/pino-timer/actions)
+[![Coverage Status](https://coveralls.io/repos/github/allevo/pino-timer/badge.svg?branch=main)](https://coveralls.io/github/allevo/pino-timer?branch=main)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
+
 
 ### Description
 `pino-timer` is a wrapper for [pino](https://github.com/pinojs/pino) which adds some utilities to calculate delta like `console.time` and `console.endTime`.
