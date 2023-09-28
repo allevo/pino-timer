@@ -1,5 +1,7 @@
+///<reference path='../index.d.ts' />
+
 import * as through2 from 'through2'
-import pinoTimer from '../'
+import pinoTimer, { TimerLogger } from '../'
 import t = require('tap')
 import pino = require('pino')
 
@@ -32,6 +34,16 @@ t.test('pino timer works with typescript', async function (t) {
   t.equal(logs[2].msg, 'middle2')
   t.equal(logs[3].bar, 'bar')
   t.equal(logs[3].msg, 'end')
+
+  const child = pinoInstance.child({})
+  const childTimer = child.startTimer({
+    label: 'middleware',
+    foo: 'foo',
+  }, 'A message')
+
+  childTimer.track('middle1')
+
+  childTimer.end('foo')
 
   t.end()
 })

@@ -4,13 +4,9 @@
 
 import { Logger as PinoLogger } from 'pino';
 
-interface Options {
-  deltaKey?: string
-}
-
 export type TimerLogger = PinoLogger & Timer;
 
-declare function pinoTimer(logger: PinoLogger, options?: Options): TimerLogger
+declare function pinoTimer(logger: PinoLogger): TimerLogger
 
 export interface TrackFn {
   (obj: Record<string, any>, msg: string): void
@@ -21,6 +17,16 @@ export interface Timer {
   startTimer: (obj: { label: string} & Record<string, any>, msg: string)  => TimerLogger
   track: TrackFn
   end: TrackFn
+}
+
+declare module 'pino' {
+  namespace pino {
+    interface BaseLogger {
+      startTimer: (obj: { label: string} & Record<string, any>, msg: string)  => TimerLogger
+      track: TrackFn
+      end: TrackFn
+    }
+  }
 }
 
 export default pinoTimer
