@@ -6,16 +6,16 @@ import PinoTimer from '../index.js'
 const pinoTimer = PinoTimer(pino())
 
 const outerOperationTimer = pinoTimer.startTimer({
-  label: 'outer operation',
+  label: 'outer operation'
 }, 'Starting...')
 {
   const middleTimer = outerOperationTimer.startTimer({
-    label: 'middle operation',
+    label: 'middle operation'
   }, 'Starting')
 
   {
     const innerTimer1 = middleTimer.startTimer({
-      label: 'inner operation 1',
+      label: 'inner operation 1'
     }, 'Starting')
 
     await asyncOperation()
@@ -31,7 +31,7 @@ const outerOperationTimer = pinoTimer.startTimer({
 
   {
     const innerTimer2 = middleTimer.startTimer({
-      label: 'inner operation 2',
+      label: 'inner operation 2'
     }, 'Starting')
 
     await asyncOperation()
@@ -48,8 +48,7 @@ const outerOperationTimer = pinoTimer.startTimer({
 
 outerOperationTimer.end('ended')
 
-
-function asyncOperation() {
+function asyncOperation () {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve('123')

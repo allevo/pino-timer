@@ -16,13 +16,13 @@ t.only('pino startTimer / end works', async function (t) {
 
   const timer = pinoInstance.startTimer({
     label: 'middleware',
-    foo: 'foo',
+    foo: 'foo'
   }, 'A message')
-  await new Promise(res => setTimeout(res, 1000))
+  await new Promise(resolve => setTimeout(resolve, 1000))
   timer.track('middle1')
-  await new Promise(res => setTimeout(res, 1000))
-  timer.track({ baz: 'baz'}, 'middle2')
-  await new Promise(res => setTimeout(res, 1000))
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  timer.track({ baz: 'baz' }, 'middle2')
+  await new Promise(resolve => setTimeout(resolve, 1000))
   timer.end({
     bar: 'bar'
   }, 'end')
@@ -77,7 +77,7 @@ t.test('pino startTimer / end works, nested', async function (t) {
     middlewareTimer = timerLogger.startTimer({
       label: 'middleware',
       method: 'POST',
-      url: '/todos',
+      url: '/todos'
     }, 'Incoming request')
   }
 
@@ -87,7 +87,7 @@ t.test('pino startTimer / end works, nested', async function (t) {
     const createTodoHandlerTimer = middlewareTimer.startTimer({
       label: 'createTodoHandler',
       userId: 'allevo',
-      name: 'My todo',
+      name: 'My todo'
     }, 'Create todo')
 
     {
@@ -96,21 +96,21 @@ t.test('pino startTimer / end works, nested', async function (t) {
       })
 
       userTimer.track('query to db')
-      await new Promise(res => setTimeout(res, 1000))
+      await new Promise(resolve => setTimeout(resolve, 1000))
       userTimer.track('query to db done')
 
       userTimer.end({
-        allowed: true,
+        allowed: true
       }, 'done')
     }
 
     {
       const todoTimer = createTodoHandlerTimer.startTimer({
-        label: 'createTodo',
+        label: 'createTodo'
       }, 'Create todo')
 
       todoTimer.track('query to db')
-      await new Promise(res => setTimeout(res, 1000))
+      await new Promise(resolve => setTimeout(resolve, 1000))
       todoTimer.track('query to db done')
 
       todoId = 'qwertyuiop'
@@ -279,7 +279,7 @@ t.test('pino startTimer / end works, nested', async function (t) {
 t.test('pino still properly', function (t) {
   const logs = []
   const pinoInstance = pinoTimer(pino({
-    level: 'info',
+    level: 'info'
   }, through2(function (chunk, enc, callback) {
     const res = JSON.parse(chunk.toString('utf8'))
     logs.push(res)

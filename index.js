@@ -1,7 +1,5 @@
 'use strict'
 
-const timers = Symbol('timers')
-
 function pinoTimer (pinoInstance) {
   function get (target, name) {
     switch (name) {
@@ -16,14 +14,14 @@ function pinoTimer (pinoInstance) {
     }
   }
 
-  function startTimer({ label, ...rest }, msg) {
+  function startTimer ({ label, ...rest }, msg) {
     const child = this.child({ [label]: true, ...rest })
     child.startTime = Date.now()
     child.previusTime = child.startTime
     child.info(msg)
     return child
   }
-  function track(obj, msg) {
+  function track (obj, msg) {
     if (msg === undefined) {
       msg = obj
       obj = {}
@@ -31,11 +29,11 @@ function pinoTimer (pinoInstance) {
     const now = Date.now()
     this.info({
       ...obj,
-      'delta': now - this.previusTime,
+      delta: now - this.previusTime
     }, msg)
     this.previusTime = now
   }
-  function end(obj, msg) {
+  function end (obj, msg) {
     if (msg === undefined) {
       msg = obj
       obj = {}
@@ -44,8 +42,8 @@ function pinoTimer (pinoInstance) {
 
     this.info({
       ...obj,
-      'delta': now - this.previusTime,
-      'totalDelta': now - this.startTime,
+      delta: now - this.previusTime,
+      totalDelta: now - this.startTime
     }, msg)
     this.previusTime = now
   }
