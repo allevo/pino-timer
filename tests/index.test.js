@@ -5,7 +5,7 @@ const pino = require('pino')
 const through2 = require('through2')
 const pinoTimer = require('../')
 
-t.only('pino startTimer / end works', async function (t) {
+t.test('pino startTimer / end works', async function (t) {
   const logs = []
 
   const pinoInstance = pinoTimer(pino(through2(function (chunk, enc, callback) {
@@ -23,9 +23,7 @@ t.only('pino startTimer / end works', async function (t) {
   await new Promise(resolve => setTimeout(resolve, 1000))
   timer.track({ baz: 'baz' }, 'middle2')
   await new Promise(resolve => setTimeout(resolve, 1000))
-  timer.end({
-    bar: 'bar'
-  }, 'end')
+  timer.end('end')
 
   t.match(logs, [
     {
@@ -51,7 +49,6 @@ t.only('pino startTimer / end works', async function (t) {
       level: 30,
       middleware: true,
       foo: 'foo',
-      bar: 'bar',
       msg: 'end'
     }
   ])

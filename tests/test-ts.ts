@@ -5,7 +5,7 @@ import pinoTimer from '../'
 
 t.test('pino timer works with typescript', async function (t) {
   let logs: any[] = []
-  const pinoInstance = pinoTimer(pino(through2(function (chunk, enc, callback) {
+  const pinoInstance = pinoTimer(pino.pino(through2(function (chunk, enc, callback) {
     const res = JSON.parse(chunk.toString('utf8'))
     logs.push(res)
     callback()
