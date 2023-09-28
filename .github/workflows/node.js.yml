@@ -31,3 +31,4 @@ jobs:
         github-token: ${{ secrets.github_token }}
         parallel: true
         flag-name: run-${{ matrix.node-version }}
+        file: '.tap/report/lcov.info'
