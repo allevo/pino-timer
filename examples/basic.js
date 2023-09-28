@@ -20,8 +20,6 @@ try {
 async function makeQuery () {
   if (Math.random() > 0.5) throw new Error('KABOOM')
   return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve('123')
-    }, 1000)
+    setTimeout(resolve, 1000, '123')
   })
 }

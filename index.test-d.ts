@@ -31,3 +31,10 @@ expectType<any>(new pinoTimerCjs(log));
 expectType<any>(new pinoTimerCjsNamed(log));
 
 expectAssignable<TimerLogger>(pinoTimerNamed(log).child({}));
+
+expectType<string>(pinoTimer(log).wrapCall('wrapCall', (logger: TimerLogger) => {
+  return 'foo'
+}))
+expectType<Promise<string>>(pinoTimer(log).wrapCall('wrapCall', async (logger: TimerLogger) => {
+  return 'foo'
+}))

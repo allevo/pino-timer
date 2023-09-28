@@ -22,6 +22,7 @@ export interface Timer {
   track: TrackFn
   end: TrackFn
   endWithError: ErrorTrackFn
+  wrapCall: <T>(label: string, fn: (logger: TimerLogger) => T) => T
 }
 
 declare module 'pino' {

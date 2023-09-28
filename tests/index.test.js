@@ -5,7 +5,7 @@ const pino = require('pino')
 const through2 = require('through2')
 const pinoTimer = require('../')
 
-t.test('pino startTimer / end works', async function (t) {
+t.test('pino-timer startTimer / end works', async function (t) {
   const logs = []
 
   const pinoInstance = pinoTimer(pino(through2(function (chunk, enc, callback) {
@@ -61,7 +61,7 @@ t.test('pino startTimer / end works', async function (t) {
   t.end()
 })
 
-t.only('pino startTimer / endWithError works', async function (t) {
+t.test('pino-timer startTimer / endWithError works', async function (t) {
   const logs = []
 
   const pinoInstance = pinoTimer(pino(through2(function (chunk, enc, callback) {
@@ -104,7 +104,232 @@ t.only('pino startTimer / endWithError works', async function (t) {
   t.end()
 })
 
-t.test('pino startTimer / end works, nested', async function (t) {
+t.test('pino-timer wrap works', async function (t) {
+  await t.test('with sync function - ok - no return', function (t) {
+    const logs = []
+
+    const pinoInstance = pinoTimer(pino(through2(function (chunk, enc, callback) {
+      const res = JSON.parse(chunk.toString('utf8'))
+      logs.push(res)
+      callback()
+    })))
+
+    pinoInstance.wrapCall('foo', _timer => { /* some work */ })
+
+    t.match(logs, [
+      {
+        level: 30,
+        foo: true,
+        msg: 'start'
+      },
+      {
+        level: 30,
+        foo: true,
+        msg: 'done'
+      }
+    ])
+
+    t.end()
+  })
+
+  await t.test('with sync function - ok - return something', function (t) {
+    const logs = []
+
+    const pinoInstance = pinoTimer(pino(through2(function (chunk, enc, callback) {
+      const res = JSON.parse(chunk.toString('utf8'))
+      logs.push(res)
+      callback()
+    })))
+
+    const r = pinoInstance.wrapCall('foo', _timer => 42)
+
+    t.match(logs, [
+      {
+        level: 30,
+        foo: true,
+        msg: 'start'
+      },
+      {
+        level: 30,
+        foo: true,
+        msg: 'done'
+      }
+    ])
+
+    t.equal(r, 42)
+
+    t.end()
+  })
+
+  await t.test('with sync function - ok - return promise', async function (t) {
+    const logs = []
+
+    const pinoInstance = pinoTimer(pino(through2(function (chunk, enc, callback) {
+      const res = JSON.parse(chunk.toString('utf8'))
+      logs.push(res)
+      callback()
+    })))
+
+    const r = pinoInstance.wrapCall('foo', _timer => Promise.resolve(42))
+    t.ok(r instanceof Promise)
+    t.equal(await r, 42)
+
+    t.match(logs, [
+      {
+        level: 30,
+        foo: true,
+        msg: 'start'
+      },
+      {
+        level: 30,
+        foo: true,
+        msg: 'done'
+      }
+    ])
+
+    t.end()
+  })
+
+  await t.test('with sync function - error', function (t) {
+    const logs = []
+
+    const pinoInstance = pinoTimer(pino(through2(function (chunk, enc, callback) {
+      const res = JSON.parse(chunk.toString('utf8'))
+      logs.push(res)
+      callback()
+    })))
+
+    const error = new Error('KABOOM')
+    try {
+      pinoInstance.wrapCall('foo', _timer => { throw error })
+      t.fail('should throw')
+    } catch (e) {
+      t.equal(e, error)
+    }
+
+    t.match(logs, [
+      {
+        level: 30,
+        foo: true,
+        msg: 'start'
+      },
+      {
+        level: 50,
+        foo: true,
+        msg: 'error',
+        err: {
+          type: 'Error',
+          message: 'KABOOM'
+        }
+      }
+    ])
+
+    t.end()
+  })
+
+  await t.test('with async function - no return', async function (t) {
+    const logs = []
+
+    const pinoInstance = pinoTimer(pino(through2(function (chunk, enc, callback) {
+      const res = JSON.parse(chunk.toString('utf8'))
+      logs.push(res)
+      callback()
+    })))
+
+    const r = await pinoInstance.wrapCall('foo', async _timer => { })
+
+    t.match(logs, [
+      {
+        level: 30,
+        foo: true,
+        msg: 'start'
+      },
+      {
+        level: 30,
+        foo: true,
+        msg: 'done'
+      }
+    ])
+
+    t.equal(r, undefined)
+
+    t.end()
+  })
+
+  await t.test('with async function - throw async', async function (t) {
+    const logs = []
+
+    const pinoInstance = pinoTimer(pino(through2(function (chunk, enc, callback) {
+      const res = JSON.parse(chunk.toString('utf8'))
+      logs.push(res)
+      callback()
+    })))
+
+    const error = new Error('KABOOM')
+    const p = pinoInstance.wrapCall('foo', async _timer => { throw error })
+    t.ok(p instanceof Promise)
+
+    try {
+      await p
+      t.fail('should throw')
+    } catch (e) {
+      t.equal(e, error)
+    }
+
+    t.match(logs, [
+      {
+        level: 30,
+        foo: true,
+        msg: 'start'
+      },
+      {
+        level: 50,
+        foo: true,
+        msg: 'error',
+        err: {
+          type: 'Error',
+          message: 'KABOOM'
+        }
+      }
+    ])
+
+    t.end()
+  })
+
+  await t.test('with async function - return something', async function (t) {
+    const logs = []
+
+    const pinoInstance = pinoTimer(pino(through2(function (chunk, enc, callback) {
+      const res = JSON.parse(chunk.toString('utf8'))
+      logs.push(res)
+      callback()
+    })))
+
+    const p = pinoInstance.wrapCall('foo', async _timer => 42)
+    t.ok(p instanceof Promise)
+
+    t.equal(await p, 42)
+
+    t.match(logs, [
+      {
+        level: 30,
+        foo: true,
+        msg: 'start'
+      },
+      {
+        level: 30,
+        foo: true,
+        msg: 'done'
+      }
+    ])
+
+    t.end()
+  })
+
+  t.end()
+})
+
+t.test('pino-timer startTimer / end works, nested', async function (t) {
   const logs = []
 
   let middlewareTimer
@@ -316,7 +541,7 @@ t.test('pino startTimer / end works, nested', async function (t) {
   t.end()
 })
 
-t.test('pino still properly', function (t) {
+t.test('pino interface still works properly', function (t) {
   const logs = []
   const pinoInstance = pinoTimer(pino({
     level: 'info'

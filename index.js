@@ -11,6 +11,8 @@ function pinoTimer (pinoInstance) {
         return end
       case 'endWithError':
         return endWithError
+      case 'wrapCall':
+        return wrapCall
       default:
         return target[name]
     }
@@ -58,6 +60,28 @@ function pinoTimer (pinoInstance) {
       totalDelta: now - this.startTime
     }, msg)
     this.previusTime = now
+  }
+  function wrapCall (label, fn) {
+    const timer = this.startTimer({ label }, 'start')
+    let r
+    try {
+      r = fn(timer)
+    } catch (e) {
+      timer.endWithError(e, 'error')
+      throw e
+    }
+    if (r instanceof Promise) {
+      return r.then((v) => {
+        timer.end('done')
+        return v
+      }, (err) => {
+        timer.endWithError(err, 'error')
+        throw err
+      })
+    }
+    timer.end('done')
+
+    return r
   }
 
   return new Proxy(pinoInstance, { get })

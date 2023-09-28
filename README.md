@@ -4,25 +4,32 @@
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
 
-### Description
+## Description
 `pino-timer` is a wrapper for [pino](https://github.com/pinojs/pino) which adds some utilities to calculate delta like `console.time` and `console.endTime`.
 This can be useful when developing with large codebases in order to track which operation tooks time.
 
-### Install
+## Install
 
 ```
 npm install pino-timer
 ```
 
-### Usage
+## Usage
 
-#### Basic
+### Basic
 
 ```js
 'use strict'
 
 const pino = require('pino')()
 const pinoTimer = require('pino-timer')(pino)
+
+async function makeQuery() {
+  // make some async operation
+  return new Promise((resolve) => {
+    setTimeout(resolve, 1000, '123')
+  })
+}
 
 const timer = pinoTimer.startTimer({
   label: 'Insert todo',
@@ -39,8 +46,7 @@ try {
 
 You can run the example above with:
 ```sh
-cd examples
-node basic.js | pino-pretty
+npm run example basic.js | pino-pretty
 ```
 
 The output will be something like:
@@ -56,7 +62,44 @@ The output will be something like:
     totalDelta: 1002
 ```
 
-#### Advanced
+### `wrapCall`
+
+`pino-timer` supports also a `wrapCall` function which wraps a function and logs the time it tooks to execute it.
+
+```js
+'use strict'
+
+const pino = require('pino')()
+const pinoTimer = require('pino-timer')(pino)
+
+async function makeQuery() {
+  // make some async operation
+  return new Promise((resolve) => {
+    setTimeout(resolve, 1000, '123')
+  })
+}
+
+const r = await pinoTimer.wrapCall('makeQuery', makeQuery)
+
+console.log(r) // r === '123'
+```
+
+You can run the example above with:
+```sh
+npm run example wrapCall.js | pino-pretty
+```
+
+The output will be something like:
+```
+[16:48:23.697] INFO (84844): start
+    makeQuery: true
+[16:48:24.700] INFO (84844): done
+    makeQuery: true
+    delta: 1003
+    totalDelta: 1003
+```
+
+### Advanced
 
 `pino-timer` supports also nested timers, in order to track nested operations.
 
@@ -112,8 +155,7 @@ outerOperationTimer.end({ todoId }, 'ended')
 
 You can run the example above with:
 ```sh
-cd examples
-node advanced.js | pino-pretty
+npm run example  advanced.js | pino-pretty
 ```
 
 The output will be something like:

@@ -5,7 +5,7 @@ import pinoTimer, { TimerLogger } from '../'
 import t = require('tap')
 import pino = require('pino')
 
-t.test('pino timer works with typescript', async function (t) {
+t.test('pino timer works with typescript', async function (t: any) {
   let logs: any[] = []
   const pinoInstance = pinoTimer(pino.pino(through2(function (chunk, enc, callback) {
     const res = JSON.parse(chunk.toString('utf8'))
@@ -35,15 +35,46 @@ t.test('pino timer works with typescript', async function (t) {
   t.equal(logs[3].bar, 'bar')
   t.equal(logs[3].msg, 'end')
 
-  const child = pinoInstance.child({})
-  const childTimer = child.startTimer({
-    label: 'middleware',
-    foo: 'foo',
-  }, 'A message')
+  t.test('child works', async function (t: any) {
+    const child = pinoInstance.child({})
+    const childTimer = child.startTimer({
+      label: 'middleware',
+      foo: 'foo',
+    }, 'A message')
 
-  childTimer.track('middle1')
+    childTimer.track('middle1')
 
-  childTimer.end('foo')
+    childTimer.end('foo')
+  })
+
+  t.test('wrapCall works', async function (t: any) {
+    const res = pinoInstance.wrapCall('wrapCall', (logger: TimerLogger) => {
+      return 'foo'
+    })
+    t.equal(res, 'foo')
+
+    const error = new Error('KABOOM')
+    try {
+      pinoInstance.wrapCall('wrapCall', (logger: TimerLogger) => {
+        throw error
+      })
+    } catch (err) {
+      t.equal(err, error)
+    }
+
+    const res2 = await pinoInstance.wrapCall('wrapCall', async (logger: TimerLogger) => {
+      return 'foo'
+    })
+    t.equal(res, 'foo')
+
+    try {
+      await pinoInstance.wrapCall('wrapCall', async (logger: TimerLogger) => {
+        throw error
+      })
+    } catch (err) {
+      t.equal(err, error)
+    }
+  })
 
   t.end()
 })
