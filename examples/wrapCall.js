@@ -5,13 +5,18 @@ import PinoTimer from '../index.js'
 
 const pinoTimer = PinoTimer(pino())
 
-async function makeQuery () {
-  // make some async operation
-  return new Promise((resolve) => {
-    setTimeout(resolve, 1000, '123')
+async function makeQuery (logger) {
+  logger.track('some msg')
+
+  await logger.wrapCall('nestedCall', async logger => {
+    // make some async operation
   })
+  // make some async operation
+  logger.track('other msg')
+
+  return '123'
 }
 
-const r = await pinoTimer.wrapCall('makeQuery', makeQuery)
+const r = await pinoTimer.wrapCall('makeQuery', logger => makeQuery(logger))
 
 console.log(r) // r === '123'

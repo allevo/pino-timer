@@ -72,14 +72,19 @@ The output will be something like:
 const pino = require('pino')()
 const pinoTimer = require('pino-timer')(pino)
 
-async function makeQuery() {
-  // make some async operation
-  return new Promise((resolve) => {
-    setTimeout(resolve, 1000, '123')
+async function makeQuery(logger) {
+  logger.track('some msg')
+
+  await logger.wrapCall('nestedCall' , async logger => {
+    // make some async operation
   })
+  // make some async operation
+  logger.track('other msg')
+
+  return '123'
 }
 
-const r = await pinoTimer.wrapCall('makeQuery', makeQuery)
+const r = await pinoTimer.wrapCall('makeQuery', logger => makeQuery(logger))
 
 console.log(r) // r === '123'
 ```
@@ -91,12 +96,27 @@ npm run example wrapCall.js | pino-pretty
 
 The output will be something like:
 ```
-[16:48:23.697] INFO (84844): start
+[18:04:17.224] INFO (94199): start
     makeQuery: true
-[16:48:24.700] INFO (84844): done
+123
+[18:04:17.224] INFO (94199): some msg
     makeQuery: true
-    delta: 1003
-    totalDelta: 1003
+    delta: 0
+[18:04:17.224] INFO (94199): start
+    makeQuery: true
+    nestedCall: true
+[18:04:17.224] INFO (94199): done
+    makeQuery: true
+    nestedCall: true
+    delta: 0
+    totalDelta: 0
+[18:04:17.224] INFO (94199): other msg
+    makeQuery: true
+    delta: 0
+[18:04:17.224] INFO (94199): done
+    makeQuery: true
+    delta: 0
+    totalDelta: 0
 ```
 
 ### Advanced
