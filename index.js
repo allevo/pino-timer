@@ -9,6 +9,8 @@ function pinoTimer (pinoInstance) {
         return track
       case 'end':
         return end
+      case 'endWithError':
+        return endWithError
       default:
         return target[name]
     }
@@ -42,6 +44,16 @@ function pinoTimer (pinoInstance) {
 
     this.info({
       ...obj,
+      delta: now - this.previusTime,
+      totalDelta: now - this.startTime
+    }, msg)
+    this.previusTime = now
+  }
+  function endWithError (err, msg) {
+    const now = Date.now()
+
+    this.error({
+      err,
       delta: now - this.previusTime,
       totalDelta: now - this.startTime
     }, msg)

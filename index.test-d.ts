@@ -1,9 +1,9 @@
-import pino, {Logger} from 'pino'
-import pinoTimer, { pinoTimer as pinoTimerNamed, type TimerLogger, type TrackFn} from ".";
-import pinoTimerDefault from ".";
-import * as pinoTimerStar from ".";
-import pinoTimerCjsImport = require (".");
-import {expectAssignable, expectType} from "tsd";
+import pino from 'pino'
+import pinoTimer, { pinoTimer as pinoTimerNamed, type TimerLogger, type TrackFn, type ErrorTrackFn} from "."
+import pinoTimerDefault from "."
+import * as pinoTimerStar from "."
+import {expectAssignable, expectType} from "tsd"
+import pinoTimerCjsImport = require (".")
 
 const pinoTimerCjs = require(".");
 const { pinoTimer: pinoTimerCjsNamed } = require('pino-timer')
@@ -16,6 +16,7 @@ timerLog.error('error!')
 
 expectType<TrackFn>(timerLog.startTimer({ label: 'test' }, 'test').track)
 expectType<TrackFn>(timerLog.startTimer({ label: 'test' }, 'test').end)
+expectType<ErrorTrackFn>(timerLog.startTimer({ label: 'test' }, 'test').endWithError)
 
 pinoTimer(log).error('error!')
 pinoTimer(log).error('error!')

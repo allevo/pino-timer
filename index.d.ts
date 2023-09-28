@@ -13,19 +13,20 @@ export interface TrackFn {
   (msg: string): void
 }
 
+export interface ErrorTrackFn {
+  (err: any, msg: string): void
+}
+
 export interface Timer {
   startTimer: (obj: { label: string} & Record<string, any>, msg: string)  => TimerLogger
   track: TrackFn
   end: TrackFn
+  endWithError: ErrorTrackFn
 }
 
 declare module 'pino' {
   namespace pino {
-    interface BaseLogger {
-      startTimer: (obj: { label: string} & Record<string, any>, msg: string)  => TimerLogger
-      track: TrackFn
-      end: TrackFn
-    }
+    interface BaseLogger extends Timer { }
   }
 }
 

@@ -10,10 +10,15 @@ const timer = pinoTimer.startTimer({
   // other properties to add to the log
   userId: '123'
 }, 'Start inserting todo')
-const todoId = await makeQuery()
-timer.end({ todoId }, 'ended')
+try {
+  const todoId = await makeQuery()
+  timer.end({ todoId }, 'ended')
+} catch (e) {
+  timer.endWithError(e, 'error')
+}
 
-function makeQuery () {
+async function makeQuery () {
+  if (Math.random() > 0.5) throw new Error('KABOOM')
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve('123')

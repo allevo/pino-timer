@@ -61,6 +61,49 @@ t.test('pino startTimer / end works', async function (t) {
   t.end()
 })
 
+t.only('pino startTimer / endWithError works', async function (t) {
+  const logs = []
+
+  const pinoInstance = pinoTimer(pino(through2(function (chunk, enc, callback) {
+    const res = JSON.parse(chunk.toString('utf8'))
+    logs.push(res)
+    callback()
+  })))
+
+  const error = new Error('KABOOM')
+
+  const timer = pinoInstance.startTimer({
+    label: 'middleware',
+    foo: 'foo'
+  }, 'A message')
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  timer.endWithError(error, 'end')
+
+  t.match(logs, [
+    {
+      level: 30,
+      middleware: true,
+      foo: 'foo',
+      msg: 'A message'
+    },
+    {
+      level: 50,
+      middleware: true,
+      foo: 'foo',
+      err: {
+        type: 'Error',
+        message: 'KABOOM'
+      },
+      msg: 'end'
+    }
+  ])
+
+  t.ok(logs[1].delta >= 1000)
+  t.ok(logs[1].totalDelta >= 1000)
+
+  t.end()
+})
+
 t.test('pino startTimer / end works, nested', async function (t) {
   const logs = []
 
