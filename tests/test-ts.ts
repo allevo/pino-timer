@@ -1,7 +1,7 @@
-import t = require('tap')
-import pino = require('pino')
 import * as through2 from 'through2'
 import pinoTimer from '../'
+import t = require('tap')
+import pino = require('pino')
 
 t.test('pino timer works with typescript', async function (t) {
   let logs: any[] = []

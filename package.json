@@ -27,7 +27,9 @@
     "test": "tap tests/*.js && npm run test-ts && npm run test-types",
     "test-ts": "ts-node tests/test-ts.ts",
     "test-watch": "tap tests/*.js tests/*.ts",
-    "test:ci": "npm run pretest && tap tests/*.js tests/*.ts --coverage-report=lcovonly && npm run test-types",
+    "test:node": "tap  --coverage-report=lcovonly tests/*.js",
+    "test:ts": "ts-node tests/test-ts.ts",
+    "test:ci": "npm run pretest && npm run test:node && npm run test:ts && npm run test-types",
     "test-types": "tsc && tsd",
     "example": "env NODE_ENV=development node examples/index.js",
     "watch": "npm-watch"
@@ -44,10 +46,5 @@
         "ts"
       ]
     }
-  },
-  "standard": {
-    "ignore": [
-      "examples/module-ts.js"
-    ]
   }
 }
