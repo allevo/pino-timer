@@ -32,3 +32,13 @@ jobs:
         parallel: true
         flag-name: run-${{ matrix.node-version }}
         file: '.tap/report/lcov.info'
+
+  coverage:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.github_token }}
+          parallel-finished: true
