@@ -18,11 +18,18 @@ function pinoTimer (pinoInstance) {
     }
   }
 
+  const breadcrumbs = new WeakMap()
   function startTimer ({ label, ...rest }, msg) {
-    const child = this.child({ [label]: true, ...rest })
+    const breadcrumbCount = breadcrumbs.has(this) ? breadcrumbs.get(this) : -1
+    const n = breadcrumbCount + 1
+    const child = this.child({ ...rest, [`b.${n}`]: label })
+
+    breadcrumbs.set(child, n)
+
     child.startTime = Date.now()
     child.previusTime = child.startTime
     child.info(msg)
+
     return child
   }
   function track (obj, msg) {

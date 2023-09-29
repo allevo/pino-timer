@@ -27,7 +27,7 @@ t.test('pino timer works with typescript', async function (t: any) {
 
   t.equal(logs.length, 4)
 
-  t.equal(logs[0].middleware, true)
+  t.equal(logs[0]['b.0'], 'middleware')
   t.equal(logs[0].msg, 'A message')
   t.equal(logs[1].msg, 'middle1')
   t.equal(logs[2].baz, 'baz')
@@ -65,7 +65,7 @@ t.test('pino timer works with typescript', async function (t: any) {
     const res2 = await pinoInstance.wrapCall('wrapCall', async (logger: TimerLogger) => {
       return 'foo'
     })
-    t.equal(res, 'foo')
+    t.equal(res2, 'foo')
 
     try {
       await pinoInstance.wrapCall('wrapCall', async (logger: TimerLogger) => {

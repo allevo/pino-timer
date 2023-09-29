@@ -28,26 +28,26 @@ t.test('pino-timer startTimer / end works', async function (t) {
   t.match(logs, [
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
       foo: 'foo',
       msg: 'A message'
     },
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
       foo: 'foo',
       msg: 'middle1'
     },
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
       foo: 'foo',
       baz: 'baz',
       msg: 'middle2'
     },
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
       foo: 'foo',
       msg: 'end'
     }
@@ -82,13 +82,13 @@ t.test('pino-timer startTimer / endWithError works', async function (t) {
   t.match(logs, [
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
       foo: 'foo',
       msg: 'A message'
     },
     {
       level: 50,
-      middleware: true,
+      'b.0': 'middleware',
       foo: 'foo',
       err: {
         type: 'Error',
@@ -119,12 +119,12 @@ t.test('pino-timer wrap works', async function (t) {
     t.match(logs, [
       {
         level: 30,
-        foo: true,
+        'b.0': 'foo',
         msg: 'start'
       },
       {
         level: 30,
-        foo: true,
+        'b.0': 'foo',
         msg: 'done'
       }
     ])
@@ -146,12 +146,12 @@ t.test('pino-timer wrap works', async function (t) {
     t.match(logs, [
       {
         level: 30,
-        foo: true,
+        'b.0': 'foo',
         msg: 'start'
       },
       {
         level: 30,
-        foo: true,
+        'b.0': 'foo',
         msg: 'done'
       }
     ])
@@ -177,12 +177,12 @@ t.test('pino-timer wrap works', async function (t) {
     t.match(logs, [
       {
         level: 30,
-        foo: true,
+        'b.0': 'foo',
         msg: 'start'
       },
       {
         level: 30,
-        foo: true,
+        'b.0': 'foo',
         msg: 'done'
       }
     ])
@@ -210,12 +210,12 @@ t.test('pino-timer wrap works', async function (t) {
     t.match(logs, [
       {
         level: 30,
-        foo: true,
+        'b.0': 'foo',
         msg: 'start'
       },
       {
         level: 50,
-        foo: true,
+        'b.0': 'foo',
         msg: 'error',
         err: {
           type: 'Error',
@@ -241,12 +241,12 @@ t.test('pino-timer wrap works', async function (t) {
     t.match(logs, [
       {
         level: 30,
-        foo: true,
+        'b.0': 'foo',
         msg: 'start'
       },
       {
         level: 30,
-        foo: true,
+        'b.0': 'foo',
         msg: 'done'
       }
     ])
@@ -279,12 +279,12 @@ t.test('pino-timer wrap works', async function (t) {
     t.match(logs, [
       {
         level: 30,
-        foo: true,
+        'b.0': 'foo',
         msg: 'start'
       },
       {
         level: 50,
-        foo: true,
+        'b.0': 'foo',
         msg: 'error',
         err: {
           type: 'Error',
@@ -313,12 +313,12 @@ t.test('pino-timer wrap works', async function (t) {
     t.match(logs, [
       {
         level: 30,
-        foo: true,
+        'b.0': 'foo',
         msg: 'start'
       },
       {
         level: 30,
-        foo: true,
+        'b.0': 'foo',
         msg: 'done'
       }
     ])
@@ -395,143 +395,143 @@ t.test('pino-timer startTimer / end works, nested', async function (t) {
   }, 'End request')
 
   await t.test('every logs has middleware property', t => {
-    t.ok(logs.every(log => log.middleware === true))
+    t.ok(logs.slice(1, -1).every(log => log['b.0'] === 'middleware'))
     t.end()
   })
   await t.test('check createTodoHandler property', t => {
-    t.ok(logs.slice(1, -1).every(log => log.createTodoHandler === true))
+    t.ok(logs.slice(1, -1).every(log => log['b.1'] === 'createTodoHandler'))
     t.end()
   })
   await t.test('check checkUser property', t => {
-    t.ok(logs.slice(2, 5).every(log => log.checkUser === true))
+    t.ok(logs.slice(2, 5).every(log => log['b.2'] === 'checkUser'))
     t.end()
   })
   await t.test('check createTodo property', t => {
-    t.ok(logs.slice(6, 9).every(log => log.createTodo === true))
+    t.ok(logs.slice(6, 9).every(log => log['b.2'] === 'createTodo'))
     t.end()
   })
 
   t.match(logs, [
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
       method: 'POST',
       url: '/todos',
       msg: 'Incoming request'
     },
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
+      'b.1': 'createTodoHandler',
       method: 'POST',
       url: '/todos',
-      createTodoHandler: true,
       userId: 'allevo',
       name: 'My todo',
       msg: 'Create todo'
     },
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
+      'b.1': 'createTodoHandler',
+      'b.2': 'checkUser',
       method: 'POST',
       url: '/todos',
-      createTodoHandler: true,
       userId: 'allevo',
-      name: 'My todo',
-      checkUser: true
+      name: 'My todo'
     },
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
+      'b.1': 'createTodoHandler',
+      'b.2': 'checkUser',
       method: 'POST',
       url: '/todos',
-      createTodoHandler: true,
       userId: 'allevo',
       name: 'My todo',
-      checkUser: true,
       msg: 'query to db'
     },
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
+      'b.1': 'createTodoHandler',
+      'b.2': 'checkUser',
       method: 'POST',
       url: '/todos',
-      createTodoHandler: true,
       userId: 'allevo',
       name: 'My todo',
-      checkUser: true,
       msg: 'query to db done'
     },
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
+      'b.1': 'createTodoHandler',
+      'b.2': 'checkUser',
       method: 'POST',
       url: '/todos',
-      createTodoHandler: true,
       userId: 'allevo',
       name: 'My todo',
-      checkUser: true,
       allowed: true,
       msg: 'done'
     },
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
+      'b.1': 'createTodoHandler',
+      'b.2': 'createTodo',
       method: 'POST',
       url: '/todos',
-      createTodoHandler: true,
       userId: 'allevo',
       name: 'My todo',
-      createTodo: true,
       msg: 'Create todo'
     },
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
+      'b.1': 'createTodoHandler',
+      'b.2': 'createTodo',
       method: 'POST',
       url: '/todos',
-      createTodoHandler: true,
       userId: 'allevo',
       name: 'My todo',
-      createTodo: true,
       msg: 'query to db'
     },
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
+      'b.1': 'createTodoHandler',
+      'b.2': 'createTodo',
       method: 'POST',
       url: '/todos',
-      createTodoHandler: true,
       userId: 'allevo',
       name: 'My todo',
-      createTodo: true,
       msg: 'query to db done'
     },
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
+      'b.1': 'createTodoHandler',
+      'b.2': 'createTodo',
       method: 'POST',
       url: '/todos',
-      createTodoHandler: true,
       userId: 'allevo',
       name: 'My todo',
-      createTodo: true,
-      todoId: 'qwertyuiop',
+      todoId,
       msg: 'Todo inserted'
     },
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
+      'b.1': 'createTodoHandler',
       method: 'POST',
       url: '/todos',
-      createTodoHandler: true,
       userId: 'allevo',
       name: 'My todo',
-      todoId: 'qwertyuiop',
+      todoId,
       msg: 'Todo created'
     },
     {
       level: 30,
-      middleware: true,
+      'b.0': 'middleware',
       method: 'POST',
       url: '/todos',
       statusCode: 200

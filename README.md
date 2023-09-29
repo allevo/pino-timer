@@ -51,15 +51,15 @@ npm run example basic.js | pino-pretty
 
 The output will be something like:
 ```
-[14:01:29.616] INFO (60789): Start inserting todo
-    Insert todo: true
+[12:07:05.393] INFO (9400): Start inserting todo
     userId: "123"
-[14:01:30.618] INFO (60789): ended
-    Insert todo: true
+    b.0: "Insert todo"
+[12:07:06.397] INFO (9400): ended
     userId: "123"
+    b.0: "Insert todo"
     todoId: "123"
-    delta: 1002
-    totalDelta: 1002
+    delta: 1004
+    totalDelta: 1004
 ```
 
 ### `wrapCall`
@@ -96,25 +96,24 @@ npm run example wrapCall.js | pino-pretty
 
 The output will be something like:
 ```
-[18:04:17.224] INFO (94199): start
-    makeQuery: true
-123
-[18:04:17.224] INFO (94199): some msg
-    makeQuery: true
+[12:07:38.838] INFO (9446): start
+    b.0: "makeQuery"
+[12:07:38.838] INFO (9446): some msg
+    b.0: "makeQuery"
     delta: 0
-[18:04:17.224] INFO (94199): start
-    makeQuery: true
-    nestedCall: true
-[18:04:17.224] INFO (94199): done
-    makeQuery: true
-    nestedCall: true
+[12:07:38.838] INFO (9446): start
+    b.0: "makeQuery"
+    b.1: "nestedCall"
+[12:07:38.838] INFO (9446): done
+    b.0: "makeQuery"
+    b.1: "nestedCall"
     delta: 0
     totalDelta: 0
-[18:04:17.224] INFO (94199): other msg
-    makeQuery: true
+[12:07:38.838] INFO (9446): other msg
+    b.0: "makeQuery"
     delta: 0
-[18:04:17.224] INFO (94199): done
-    makeQuery: true
+[12:07:38.838] INFO (9446): done
+    b.0: "makeQuery"
     delta: 0
     totalDelta: 0
 ```
@@ -180,53 +179,59 @@ npm run example  advanced.js | pino-pretty
 
 The output will be something like:
 ```
-[14:04:15.658] INFO (60879): Starting...
-    outer operation: true
-[14:04:15.658] INFO (60879): Starting
-    outer operation: true
-    middle operation: true
-[14:04:15.658] INFO (60879): Starting
-    outer operation: true
-    middle operation: true
-    inner operation 1: true
-[14:04:16.661] INFO (60879): doing something...
-    outer operation: true
-    middle operation: true
-    inner operation 1: true
-    delta: 1003
-[14:04:17.662] INFO (60879): ended
-    outer operation: true
-    middle operation: true
-    inner operation 1: true
+[12:08:05.936] INFO (9476): Starting...
+    b.0: "outer operation"
+[12:08:05.936] INFO (9476): Starting
+    b.0: "outer operation"
+    b.1: "middle operation"
+[12:08:05.936] INFO (9476): Starting
+    b.0: "outer operation"
+    b.1: "middle operation"
+    b.2: "inner operation 1"
+[12:08:06.941] INFO (9476): doing something...
+    b.0: "outer operation"
+    b.1: "middle operation"
+    b.2: "inner operation 1"
+    delta: 1005
+[12:08:07.943] INFO (9476): ended
+    b.0: "outer operation"
+    b.1: "middle operation"
+    b.2: "inner operation 1"
     result: "123"
-    delta: 1001
-    totalDelta: 2004
-[14:04:17.663] INFO (60879): first operation is done, starting second operation...
-    outer operation: true
-    middle operation: true
-[14:04:17.663] INFO (60879): Starting
-    outer operation: true
-    middle operation: true
-    inner operation 2: true
-[14:04:18.664] INFO (60879): doing something...
-    outer operation: true
-    middle operation: true
-    inner operation 2: true
-    delta: 1001
-[14:04:19.666] INFO (60879): ended
-    outer operation: true
-    middle operation: true
-    inner operation 2: true
-    todoId: "123"
     delta: 1002
-    totalDelta: 2003
-[14:04:19.666] INFO (60879): ended
-    outer operation: true
-    middle operation: true
-    delta: 4008
-    totalDelta: 4008
-[14:04:19.667] INFO (60879): ended
-    outer operation: true
-    delta: 4008
-    totalDelta: 4008
+    totalDelta: 2007
+[12:08:07.943] INFO (9476): first operation is done, starting second operation...
+    b.0: "outer operation"
+    b.1: "middle operation"
+[12:08:07.944] INFO (9476): Starting
+    b.0: "outer operation"
+    b.1: "middle operation"
+    b.2: "inner operation 2"
+[12:08:08.945] INFO (9476): doing something...
+    b.0: "outer operation"
+    b.1: "middle operation"
+    b.2: "inner operation 2"
+    delta: 1001
+[12:08:09.946] INFO (9476): ended
+    b.0: "outer operation"
+    b.1: "middle operation"
+    b.2: "inner operation 2"
+    todoId: "123"
+    delta: 1001
+    totalDelta: 2002
+[12:08:09.946] INFO (9476): ended
+    b.0: "outer operation"
+    b.1: "middle operation"
+    delta: 4010
+    totalDelta: 4010
+[12:08:09.946] INFO (9476): ended
+    b.0: "outer operation"
+    delta: 4010
+    totalDelta: 4010
 ```
+
+## Reason
+Logs are real important. Anyway without a proper structure they can be hard to read and to understand.
+This is why logs with context are so important. `pino-timer` helps you to create logs with context and to track in which context an operation is executed, how much time the single operation tooks and how much time the whole operation tooks.
+
+This package is not a silver bullet, but it can help you to improve your logs.
